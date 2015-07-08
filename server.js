@@ -17,8 +17,9 @@ app.use(bodyParser.json());
 var port     = process.env.PORT || 8080; // set our port
 
 var mongoose   = require('mongoose');
-mongoose.connect('mongodb://node:node@novus.modulusmongo.net:27017/Iganiq8o'); // connect to our database
+mongoose.connect('mongodb://localhost/myTestDB'); // connect to our database
 var Bear     = require('./app/models/bear');
+mongoose.set('debug', true);
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -42,18 +43,28 @@ router.get('/', function(req, res) {
 // ----------------------------------------------------
 router.route('/bears')
 
+
+
 	// create a bear (accessed at POST http://localhost:8080/bears)
 	.post(function(req, res) {
-		
+
+        console.log('in bears post');
 		var bear = new Bear();		// create a new instance of the Bear model
 		bear.name = req.body.name;  // set the bears name (comes from the request)
 
+        console.log('ready to save '+ bear.name);
 		bear.save(function(err) {
-			if (err)
-				res.send(err);
+            console.log('in save callback');
+			if (err) {
+
+                consoe.log('save err' + err);
+                res.send(err);
+            }
 
 			res.json({ message: 'Bear created!' });
+            console.log('done saving');
 		});
+        console.log('end of post');
 
 		
 	})
