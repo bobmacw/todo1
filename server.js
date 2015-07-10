@@ -17,8 +17,8 @@ app.use(bodyParser.json());
 var port     = process.env.PORT || 8080; // set our port
 
 var mongoose   = require('mongoose');
-mongoose.connect('mongodb://localhost/myTestDB'); // connect to our database
-var Bear     = require('./app/models/bear');
+mongoose.connect('mongodb://localhost/todoDB'); // connect to our database
+var Item     = require('./app/models/item');
 mongoose.set('debug', true);
 
 // ROUTES FOR OUR API
@@ -39,36 +39,38 @@ router.get('/', function(req, res) {
 	res.json({ message: 'Todo API is online' });
 });
 
-// on routes that end in /bears
+// on routes that end in /items
 // ----------------------------------------------------
-router.route('/bears')
+router.route('/items')
 
 
 
 	// create a bear (accessed at POST http://localhost:8080/bears)
 	.post(function(req, res) {
 
-		var bear = new Bear();		// create a new instance of the Bear model
-		bear.name = req.body.name;  // set the bears name (comes from the request)
+		var item = new Item();		// create a new instance of the Item model
+		item.summary = req.body.summary;  // set the item fields from the request
+        item.detail = req.body.detail;
+        item.status = req.body.status;
 
-		bear.save(function(err) {
+		item.save(function(err) {
 			if (err) {
 
                 console.log('save err' + err);
                 res.send(err);
             }
 
-			res.json({ message: 'Bear created!' });
+			res.json({ message: 'New item created' });
 		});
 	})
 
 	// get all the bears (accessed at GET http://localhost:8080/api/bears)
 	.get(function(req, res) {
-		Bear.find(function(err, bears) {
+		Item.find(function(err, items) {
 			if (err)
 				res.send(err);
 
-			res.json(bears);
+			res.json(items);
 		});
 	});
 
@@ -78,7 +80,7 @@ router.route('/bears/:bear_id')
 
 	// get the bear with that id
 	.get(function(req, res) {
-		Bear.findById(req.params.bear_id, function(err, bear) {
+		Item.findById(req.params.bear_id, function(err, bear) {
 			if (err)
 				res.send(err);
 			res.json(bear);
@@ -87,7 +89,7 @@ router.route('/bears/:bear_id')
 
 	// update the bear with this id
 	.put(function(req, res) {
-		Bear.findById(req.params.bear_id, function(err, bear) {
+		Item.findById(req.params.bear_id, function(err, bear) {
 
 			if (err)
 				res.send(err);
@@ -97,7 +99,7 @@ router.route('/bears/:bear_id')
 				if (err)
 					res.send(err);
 
-				res.json({ message: 'Bear updated!' });
+				res.json({ message: 'Item updated!' });
 			});
 
 		});
@@ -105,7 +107,7 @@ router.route('/bears/:bear_id')
 
 	// delete the bear with this id
 	.delete(function(req, res) {
-		Bear.remove({
+		Item.remove({
 			_id: req.params.bear_id
 		}, function(err, bear) {
 			if (err)
