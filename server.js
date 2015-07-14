@@ -45,7 +45,7 @@ router.route('/items')
 
 
 
-	// create a bear (accessed at POST http://localhost:8080/bears)
+	// create a item (accessed at POST http://localhost:8080/items)
 	.post(function(req, res) {
 
 		var item = new Item();		// create a new instance of the Item model
@@ -64,7 +64,7 @@ router.route('/items')
 		});
 	})
 
-	// get all the bears (accessed at GET http://localhost:8080/api/bears)
+	// get all the items (accessed at GET http://localhost:8080/api/items)
 	.get(function(req, res) {
 		Item.find(function(err, items) {
 			if (err)
@@ -74,28 +74,34 @@ router.route('/items')
 		});
 	});
 
-// on routes that end in /bears/:bear_id
+// on routes that end in /items/:item_id
 // ----------------------------------------------------
-router.route('/bears/:bear_id')
+router.route('/items/:item_id')
 
-	// get the bear with that id
+	// get the item with that id
 	.get(function(req, res) {
-		Item.findById(req.params.bear_id, function(err, bear) {
+		Item.findById(req.params.item_id, function(err, item) {
 			if (err)
 				res.send(err);
-			res.json(bear);
+			res.json(item);
 		});
 	})
 
-	// update the bear with this id
+	// update the item with this id
 	.put(function(req, res) {
-		Item.findById(req.params.bear_id, function(err, bear) {
+		Item.findById(req.params.item_id, function(err, item) {
 
 			if (err)
 				res.send(err);
 
-			bear.name = req.body.name;
-			bear.save(function(err) {
+            if (req.body.summary)
+                item.summary = req.body.summary;
+            if (req.body.detail)
+                item.detail = req.body.detail;
+            if (req.body.status)
+                item.status = req.body.status;
+
+            item.save(function(err) {
 				if (err)
 					res.send(err);
 
@@ -105,11 +111,11 @@ router.route('/bears/:bear_id')
 		});
 	})
 
-	// delete the bear with this id
+	// delete the item with this id
 	.delete(function(req, res) {
 		Item.remove({
-			_id: req.params.bear_id
-		}, function(err, bear) {
+			_id: req.params.item_id
+		}, function(err, item) {
 			if (err)
 				res.send(err);
 
